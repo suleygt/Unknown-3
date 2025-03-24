@@ -15,11 +15,11 @@ export default function Tweet() {
   const display = useDisplay(tweet.display);
 
   if (!user || !tweet) {
-    return <div className="text-center text-gray-500">Yükleniyor...</div>;
+    return <div className="loading-message">Yükleniyor...</div>;
   }
 
   return (
-    <div className={`tweet ${display} grid max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-200`}> 
+    <div className={`tweet ${display}`}>
       <UserInfo />
       <Content />
       <Metadata />
@@ -30,32 +30,43 @@ export default function Tweet() {
 
   function UserInfo() {
     return (
-      <div className="flexs items-center space-x-3 mb-4">
-      
-        <img
-          className="avatars h-10 rounded-full border border-gray-300 shadow-sm object-cover"
-          src={user.avatar}
-          alt={`${user.name} avatar`}
-        />
-        <div className="flex-1">
-          <div className="flex items-center">
-            <Twemoji options={{ className: "twemoji-sm" }} className="text-blue-600 font-semibold text-lg">
-              {user.name}
-            </Twemoji>
-            {user.verified && <Verified className="ml-2 text-blue-500" />}
-            {user.locked && !user.verified && <Lock className="ml-2 text-gray-500" />}
-          </div>
-          <div className="text-sm text-gray-500">@{user.username}</div>
+      <div className="user-info">
+        <div className="profile-photo-container">
+          <img
+            className="profile-photo"
+            src={user.avatar}
+            alt={`${user.name} avatar`}
+          />
         </div>
-        <Drop className="text-gray-400 hover:text-gray-600 cursor-pointer" />
+        <div className="user-info-right">
+          <div className="drop-button">
+            <Drop />
+          </div>
+          <div className="user-name">
+            <Twemoji options={{ className: "twemoji-sm" }} className="user-name-txt">
+              <span className="link">{user.name}</span>
+            </Twemoji>
+            {user.verified && (
+              <div className="icon">
+                <Verified />
+              </div>
+            )}
+            {user.locked && !user.verified && (
+              <div className="icon">
+                <Lock />
+              </div>
+            )}
+          </div>
+          <div className="user-username">@{user.username}</div>
+        </div>
       </div>
     );
   }
 
   function Content() {
     return (
-      <div className="mb-4">
-        {text && <div className="text-lg leading-6 text-gray-800">{text}</div>}
+      <div className="tweet-content">
+        {text && <div className="txt">{text}</div>}
         <ImagesContainer />
       </div>
     );
@@ -64,23 +75,14 @@ export default function Tweet() {
   function ImagesContainer() {
     switch (image.length) {
       case 1:
-        return <img className="tweet-image mx-auto" src={image} alt="" />;
+        return <div className="image-container"><img src={image} alt="" /></div>;
       case 2:
       case 3:
-        return (
-          <div className="tweet-images-container grid-cols-2 gap-2">
-            {image.map((img, index) => (
-              
-              <img key={index} className="w-[150px] h-[150px] rounded-lg shadow-sm object-cover" src={img} alt="" />
-            ))}
-          </div>
-        );
       case 4:
         return (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="tweet-images-container">
             {image.map((img, index) => (
-             
-              <img key={index} className="w-[150px] h-[150px] rounded-lg shadow-sm object-cover" src={img} alt="" />
+              <img key={index} className="tweet-image" src={img} alt="" />
             ))}
           </div>
         );
@@ -91,8 +93,8 @@ export default function Tweet() {
 
   function Metadata() {
     return (
-      <div className="tweet-infoss text-sm text-gray-500 mt-2 border-t pt-2">
-        {tweet.date} · <span className="text-blue-500 font-semibold">{tweet.app}</span>
+      <div className="metadata">
+        {tweet.date} · <span className="app-name">{tweet.app}</span>
       </div>
     );
   }
@@ -100,20 +102,21 @@ export default function Tweet() {
   function TweetInfos() {
     return (
       <div className="tweet-infos">
-        <span className="text-blue-600 font-semibold">{tweet.retweets} Retweets</span>
-        <span className="text-green-600 font-semibold">{tweet.quotedTweets} Quoted Tweets</span>
-        <span className="text-red-600 font-semibold">{tweet.likes} Likes</span>
+        <span className="retweet-count">{tweet.retweets} Retweets</span>
+        <span className="quote-count">{tweet.quotedTweets} Quoted Tweets</span>
+        <span className="like-count">{tweet.likes} Likes</span>
       </div>
     );
   }
 
   function Actions() {
     return (
-      <div className="actions-wrapper mt-3">
+      <div className="actions-wrapper">
         <div className="action-icon"><Comment /></div>
         <div className="action-icon"><Retweet /></div>
         <div className="action-icon"><Like /></div>
         <div className="action-icon"><Share /></div>
       </div>
     );
-  }  }
+  }
+}
